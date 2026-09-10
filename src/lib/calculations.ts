@@ -31,7 +31,7 @@ export function calculateTotalMonthlyAmount(expenses: RecurringExpenseInput[]) {
   return expenses.reduce((total, expense) => total + calculateMonthlyAmount(expense), 0);
 }
 
-export function splitExpensesForStory(expenses: Expense[], featuredLimit = 4) {
+export function splitExpensesForStory(expenses: Expense[], featuredLimit = 5) {
   const featured = expenses.slice(0, featuredLimit);
   const remaining = expenses.slice(featuredLimit);
 

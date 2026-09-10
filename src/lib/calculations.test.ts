@@ -35,7 +35,7 @@ test("safely restores only valid expenses from saved browser data", () => {
   assert.deepEqual(parseExpensesFromStorage("not-json"), []);
 });
 
-test("keeps four expenses in a story and summarizes the remaining monthly total", () => {
+test("keeps five expenses in a story and summarizes the remaining monthly total", () => {
   const expenses = [
     { id: "a", name: "Galon", amount: 26000, interval: 4, intervalUnit: "day" as const },
     { id: "b", name: "Kuota", amount: 45000, interval: 28, intervalUnit: "day" as const },
@@ -47,7 +47,7 @@ test("keeps four expenses in a story and summarizes the remaining monthly total"
 
   const story = splitExpensesForStory(expenses);
 
-  assert.deepEqual(story.featured.map((expense) => expense.id), ["a", "b", "c", "d"]);
-  assert.equal(story.remainingCount, 2);
-  assert.equal(story.remainingTotal, 214286);
+  assert.deepEqual(story.featured.map((expense) => expense.id), ["a", "b", "c", "d", "e"]);
+  assert.equal(story.remainingCount, 1);
+  assert.equal(story.remainingTotal, 107143);
 });
