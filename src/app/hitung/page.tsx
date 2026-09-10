@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Container } from "@/components/container";
-import { calculateMonthlyAmount, calculateTotalMonthlyAmount, Expense, IntervalUnit, parseExpensesFromStorage } from "@/lib/calculations";
+import { calculateMonthlyAmount, calculateTotalMonthlyAmount, Expense, IntervalUnit, parseExpensesFromStorage, splitExpensesForStory } from "@/lib/calculations";
 
 const STORAGE_KEY = "prediksi-bulanan:v1";
 type ExpenseDraft = { name: string; emoji: string; amount: string; interval: string; intervalUnit: IntervalUnit };
@@ -37,38 +37,45 @@ function makeId() {
 }
 
 function drawShareCard(expenses: Expense[], total: number) {
-  const scale = 2, width = 1080, rowHeight = 176, height = Math.max(1350, 620 + expenses.length * rowHeight + 220);
+  const width = 1080, height = 1920;
   const canvas = document.createElement("canvas");
-  canvas.width = width * scale; canvas.height = height * scale;
+  canvas.width = width; canvas.height = height;
   const context = canvas.getContext("2d");
   if (!context) return null;
-  context.scale(scale, scale);
-  context.fillStyle = "#faf9f6"; context.fillRect(0, 0, width, height);
-  context.fillStyle = "#e8f7f2"; context.beginPath(); context.arc(width + 80, -20, 250, 0, Math.PI * 2); context.fill();
-  context.fillStyle = "#10213c"; context.roundRect(56, 54, 968, 428, 42); context.fill();
-  context.fillStyle = "#84ddc2"; context.font = "600 28px Arial, sans-serif"; context.fillText("Prediksi Bulanan", 112, 128);
-  context.fillStyle = "#ffffff"; context.font = "700 76px Arial, sans-serif"; context.fillText(formatRupiah(total), 112, 260);
-  context.fillStyle = "rgba(255,255,255,0.68)"; context.font = "400 30px Arial, sans-serif"; context.fillText("estimasi pengeluaran / 30 hari", 112, 320);
-  context.fillStyle = "#00a67d"; context.roundRect(112, 364, 286, 62, 31); context.fill();
-  context.fillStyle = "#ffffff"; context.font = "600 24px Arial, sans-serif"; context.fillText(`${expenses.length} pengeluaran rutin`, 142, 404);
-  let y = 562;
-  expenses.forEach((expense) => {
+  const story = splitExpensesForStory(expenses);
+  context.fillStyle = "#f7f5f0"; context.fillRect(0, 0, width, height);
+  context.fillStyle = "#dcefe8"; context.beginPath(); context.arc(1020, 70, 250, 0, Math.PI * 2); context.fill();
+  context.fillStyle = "#e7e3d8"; context.beginPath(); context.arc(14, 1810, 175, 0, Math.PI * 2); context.fill();
+  const headerGradient = context.createLinearGradient(56, 80, 1024, 640);
+  headerGradient.addColorStop(0, "#10213c"); headerGradient.addColorStop(1, "#176f5a");
+  context.fillStyle = headerGradient; context.beginPath(); context.roundRect(56, 80, 968, 560, 48); context.fill();
+  context.fillStyle = "#a8e4ce"; context.font = "600 29px Arial, sans-serif"; context.fillText("Prediksi Bulanan", 112, 166);
+  context.fillStyle = "#ffffff"; context.font = "700 82px Arial, sans-serif"; context.fillText(formatRupiah(total), 112, 310);
+  context.fillStyle = "rgba(255,255,255,0.72)"; context.font = "400 30px Arial, sans-serif"; context.fillText("Estimasi pengeluaran dalam 30 hari", 112, 370);
+  context.fillStyle = "rgba(255,255,255,0.13)"; context.beginPath(); context.roundRect(112, 448, 338, 70, 35); context.fill();
+  context.fillStyle = "#ffffff"; context.font = "600 25px Arial, sans-serif"; context.fillText(`${expenses.length} pengeluaran rutin`, 144, 493);
+  context.fillStyle = "rgba(255,255,255,0.2)"; context.fillRect(112, 550, 800, 1);
+  context.fillStyle = "rgba(255,255,255,0.64)"; context.font = "500 24px Arial, sans-serif"; context.fillText("Ringkasan yang siap dibagikan", 112, 592);
+  context.fillStyle = "#58645e"; context.font = "600 26px Arial, sans-serif"; context.fillText("Pengeluaran rutin", 72, 710);
+  let y = 746;
+  story.featured.forEach((expense) => {
     const estimate = calculateMonthlyAmount(expense);
-    context.fillStyle = "#ffffff"; context.roundRect(56, y, 968, 140, 30); context.fill();
-    context.fillStyle = "#e4e9e5"; context.fillRect(56, y + 139, 968, 1);
-    context.fillStyle = "#e8f7f2"; context.beginPath(); context.arc(112, y + 70, 34, 0, Math.PI * 2); context.fill();
-    context.fillStyle = "#10213c"; context.font = "32px Arial, sans-serif"; context.fillText(expense.emoji?.trim() || "•", 98, y + 82);
-    context.font = "700 31px Arial, sans-serif"; context.fillText(expense.name, 174, y + 58);
-    context.fillStyle = "#667069"; context.font = "400 24px Arial, sans-serif"; context.fillText(formatFrequency(expense), 174, y + 96);
-    context.fillStyle = "#287a5d"; context.font = "600 25px Arial, sans-serif";
+    context.fillStyle = "#ffffff"; context.beginPath(); context.roundRect(56, y, 968, 166, 32); context.fill();
+    context.fillStyle = "#e8f7f2"; context.beginPath(); context.arc(128, y + 83, 44, 0, Math.PI * 2); context.fill();
+    context.fillStyle = "#10213c"; context.font = "39px Arial, sans-serif"; context.fillText(expense.emoji?.trim() || "•", 110, y + 97);
+    context.font = "700 35px Arial, sans-serif"; context.fillText(expense.name, 204, y + 66);
+    context.fillStyle = "#667069"; context.font = "400 27px Arial, sans-serif"; context.fillText(formatFrequency(expense), 204, y + 113);
+    context.fillStyle = "#287a5d"; context.font = "600 27px Arial, sans-serif";
     const estimateText = `≈ ${formatRupiah(estimate)} / bulan`;
-    context.fillText(estimateText, 1024 - context.measureText(estimateText).width, y + 76); y += rowHeight;
+    context.fillText(estimateText, 970 - context.measureText(estimateText).width, y + 93); y += 188;
   });
-  const totalY = y + 30;
-  context.fillStyle = "#10213c"; context.roundRect(56, totalY, 968, 156, 34); context.fill();
-  context.fillStyle = "rgba(255,255,255,0.66)"; context.font = "600 25px Arial, sans-serif"; context.fillText("Total", 104, totalY + 58);
-  context.fillStyle = "#ffffff"; context.font = "700 43px Arial, sans-serif"; context.fillText(`${formatRupiah(total)} / 30 hari`, 104, totalY + 112);
-  context.fillStyle = "#6d7a72"; context.font = "600 24px Arial, sans-serif"; context.fillText("Prediksi Bulanan", 56, height - 62);
+  if (story.remainingCount) {
+    context.fillStyle = "#d8eee5"; context.beginPath(); context.roundRect(56, y + 2, 968, 118, 30); context.fill();
+    context.fillStyle = "#287a5d"; context.font = "600 27px Arial, sans-serif"; context.fillText(`${story.remainingCount} item lainnya`, 92, y + 51);
+    context.fillStyle = "#50665b"; context.font = "400 24px Arial, sans-serif"; context.fillText(`Total ≈ ${formatRupiah(story.remainingTotal)} / bulan`, 92, y + 89);
+    y += 154;
+  }
+  context.fillStyle = "#64736b"; context.font = "600 25px Arial, sans-serif"; context.fillText("Dibuat dengan Prediksi Bulanan", 56, 1854);
   return canvas;
 }
 

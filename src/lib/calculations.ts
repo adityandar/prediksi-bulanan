@@ -31,6 +31,17 @@ export function calculateTotalMonthlyAmount(expenses: RecurringExpenseInput[]) {
   return expenses.reduce((total, expense) => total + calculateMonthlyAmount(expense), 0);
 }
 
+export function splitExpensesForStory(expenses: Expense[], featuredLimit = 4) {
+  const featured = expenses.slice(0, featuredLimit);
+  const remaining = expenses.slice(featuredLimit);
+
+  return {
+    featured,
+    remainingCount: remaining.length,
+    remainingTotal: calculateTotalMonthlyAmount(remaining),
+  };
+}
+
 export function parseExpensesFromStorage(value: string | null): Expense[] {
   if (!value) return [];
 

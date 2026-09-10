@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { calculateMonthlyAmount, calculateTotalMonthlyAmount, parseExpensesFromStorage } from "./calculations.ts";
+import { calculateMonthlyAmount, calculateTotalMonthlyAmount, parseExpensesFromStorage, splitExpensesForStory } from "./calculations.ts";
 
 test("normalizes recurring expenses to a fixed 30-day total", () => {
   assert.equal(calculateMonthlyAmount({ amount: 26000, interval: 3, intervalUnit: "day" }), 260000);
@@ -33,4 +33,21 @@ test("safely restores only valid expenses from saved browser data", () => {
     { id: "galon", name: "Galon", emoji: "💧", amount: 26000, interval: 3, intervalUnit: "day" },
   ]);
   assert.deepEqual(parseExpensesFromStorage("not-json"), []);
+});
+
+test("keeps four expenses in a story and summarizes the remaining monthly total", () => {
+  const expenses = [
+    { id: "a", name: "Galon", amount: 26000, interval: 4, intervalUnit: "day" as const },
+    { id: "b", name: "Kuota", amount: 45000, interval: 28, intervalUnit: "day" as const },
+    { id: "c", name: "Listrik", amount: 300000, interval: 1, intervalUnit: "month" as const },
+    { id: "d", name: "Bensin", amount: 100000, interval: 1, intervalUnit: "week" as const },
+    { id: "e", name: "Kopi", amount: 25000, interval: 7, intervalUnit: "day" as const },
+    { id: "f", name: "Laundry", amount: 50000, interval: 2, intervalUnit: "week" as const },
+  ];
+
+  const story = splitExpensesForStory(expenses);
+
+  assert.deepEqual(story.featured.map((expense) => expense.id), ["a", "b", "c", "d"]);
+  assert.equal(story.remainingCount, 2);
+  assert.equal(story.remainingTotal, 214286);
 });
