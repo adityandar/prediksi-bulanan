@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Container } from "@/components/container";
+import { trackEvent } from "@/lib/analytics";
 import { calculateMonthlyAmount, calculateTotalMonthlyAmount, Expense, IntervalUnit, parseExpensesFromStorage, splitExpensesForStory } from "@/lib/calculations";
 
 const STORAGE_KEY = "prediksi-bulanan:v1";
@@ -103,9 +104,13 @@ export default function HitungPage() {
     if (!Number.isFinite(amount) || amount <= 0) return setError("Masukkan nominal yang valid.");
     if (!Number.isFinite(interval) || interval <= 0) return setError("Frekuensi perlu lebih dari nol.");
     const next: Expense = { id: editingId ?? makeId(), name: draft.name.trim(), emoji: draft.emoji.trim(), amount: Math.round(amount), interval: Math.round(interval), intervalUnit: draft.intervalUnit };
-    setExpenses((current) => editingId ? current.map((expense) => expense.id === editingId ? next : expense) : [...current, next]); closeForm();
+    const itemCount = editingId ? expenses.length : expenses.length + 1;
+    setExpenses((current) => editingId ? current.map((expense) => expense.id === editingId ? next : expense) : [...current, next]);
+    if (!editingId) trackEvent("add_expense_item", { interval_unit: next.intervalUnit, item_count: itemCount });
+    trackEvent("calculation_completed", { item_count: itemCount });
+    closeForm();
   }
-  function exportImage() { if (!expenses.length) return; setIsExporting(true); requestAnimationFrame(() => { const canvas = drawShareCard(expenses, total); if (canvas) { const link = document.createElement("a"); link.download = "prediksi-bulanan.png"; link.href = canvas.toDataURL("image/png"); link.click(); } setIsExporting(false); }); }
+  function exportImage() { if (!expenses.length) return; setIsExporting(true); requestAnimationFrame(() => { const canvas = drawShareCard(expenses, total); if (canvas) { const link = document.createElement("a"); link.download = "prediksi-bulanan.png"; link.href = canvas.toDataURL("image/png"); link.click(); trackEvent("export_image", { item_count: expenses.length }); } setIsExporting(false); }); }
   const field = "min-h-12 rounded-xl border border-[#dfe4de] bg-[#faf9f6] px-3 text-[16px] text-[#10213c] outline-none transition placeholder:text-[#a0a7a2] focus:border-[#00a67d] focus:ring-3 focus:ring-[#00a67d]/10";
   return <main className="min-h-screen bg-[#faf9f6] pb-16"><header className="border-b border-[#e8e6e0] bg-[#faf9f6]"><Container className="flex h-16 items-center justify-between"><Link href="/" className="text-base font-semibold tracking-[-0.025em] text-[#10213c]">Prediksi Bulanan</Link><Link href="/" className="text-sm font-medium text-[#667069] transition hover:text-[#287a5d]">← Beranda</Link></Container></header><Container className="max-w-3xl py-8 sm:py-12"><div className="mx-auto max-w-2xl">
     <section className="relative overflow-hidden rounded-[30px] bg-[#10213c] px-6 py-8 text-white shadow-[0_18px_44px_rgba(16,33,60,0.16)] sm:px-9 sm:py-10"><div className="absolute right-0 top-0 size-36 translate-x-1/3 -translate-y-1/3 rounded-full border-[24px] border-white/[0.05]"/><div className="relative"><p className="text-sm font-medium text-white/65">Prediksi pengeluaranmu</p><p className="mt-3 text-[42px] font-bold leading-none tracking-[-0.055em] sm:text-[56px]">{formatRupiah(total)}</p><p className="mt-3 text-sm text-white/65">dalam 30 hari{expenses.length ? ` · ${expenses.length} pengeluaran rutin` : ""}</p></div></section>

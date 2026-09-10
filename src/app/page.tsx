@@ -1,8 +1,7 @@
-import Link from "next/link";
-
 import { Container } from "@/components/container";
 import { ProductPreview } from "@/components/product-preview";
 import { SiteHeader } from "@/components/site-header";
+import { StartCalculatingLink } from "@/components/start-calculating-link";
 
 const steps = [
   {
@@ -70,15 +69,14 @@ export default function Home() {
                 </p>
 
                 <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-                  <Link
-                    href="/hitung"
+                  <StartCalculatingLink
                     className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#00a67d] px-6 text-[15px] font-semibold text-white shadow-[0_8px_24px_rgba(40,122,93,0.20)] transition hover:-translate-y-0.5 hover:bg-[#20684e] hover:shadow-[0_12px_30px_rgba(40,122,93,0.24)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#287a5d]"
                   >
                     Mulai Hitung
                     <span aria-hidden="true" className="ml-2">
                       →
                     </span>
-                  </Link>
+                  </StartCalculatingLink>
 
                   <p className="text-sm text-[#858c87]">
                     Gratis · Tanpa login · Tersimpan di browser
@@ -208,15 +206,14 @@ export default function Home() {
                   </h2>
                 </div>
 
-                <Link
-                  href="/hitung"
+                <StartCalculatingLink
                   className="inline-flex min-h-12 w-fit shrink-0 items-center justify-center rounded-full bg-white px-6 text-[15px] font-semibold text-[#19211c] transition hover:-translate-y-0.5 hover:bg-[#f2f2ed] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   Mulai Hitung
                   <span aria-hidden="true" className="ml-2">
                     →
                   </span>
-                </Link>
+                </StartCalculatingLink>
               </div>
             </div>
           </Container>
