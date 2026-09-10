@@ -54,7 +54,7 @@ export default function Home() {
             <div className="grid items-center gap-14 lg:grid-cols-[1.03fr_0.97fr] lg:gap-16">
               <div className="max-w-2xl">
                 <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#dfe4de] bg-white px-3 py-1.5 text-sm font-medium text-[#58635c]">
-                  <span className="size-2 rounded-full bg-[#287a5d]" />
+                  <span className="size-2 rounded-full bg-[#00a67d]" />
                   Pengeluaran rutin, dipermudah.
                 </div>
 
@@ -72,7 +72,7 @@ export default function Home() {
                 <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
                   <Link
                     href="/hitung"
-                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#287a5d] px-6 text-[15px] font-semibold text-white shadow-[0_8px_24px_rgba(40,122,93,0.20)] transition hover:-translate-y-0.5 hover:bg-[#20684e] hover:shadow-[0_12px_30px_rgba(40,122,93,0.24)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#287a5d]"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#00a67d] px-6 text-[15px] font-semibold text-white shadow-[0_8px_24px_rgba(40,122,93,0.20)] transition hover:-translate-y-0.5 hover:bg-[#20684e] hover:shadow-[0_12px_30px_rgba(40,122,93,0.24)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#287a5d]"
                   >
                     Mulai Hitung
                     <span aria-hidden="true" className="ml-2">
@@ -194,7 +194,7 @@ export default function Home() {
 
         <section className="pb-20 sm:pb-24">
           <Container>
-            <div className="relative overflow-hidden rounded-[30px] bg-[#19211c] px-6 py-12 text-white sm:px-10 sm:py-14 lg:px-14">
+            <div className="relative overflow-hidden rounded-[30px] bg-[#10213c] px-6 py-12 text-white sm:px-10 sm:py-14 lg:px-14">
               <div className="absolute right-0 top-0 size-40 translate-x-1/3 -translate-y-1/3 rounded-full border-[28px] border-white/[0.04]" />
 
               <div className="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">

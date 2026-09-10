@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { Container } from "@/components/container";
 import { SiteHeader } from "@/components/site-header";
@@ -11,9 +12,13 @@ export default function HitungPage() {
             <main className="py-16 sm:py-24">
                 <Container>
                     <div className="mx-auto max-w-xl text-center">
-                        <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-[#e8f3ed] text-sm font-bold text-[#287a5d]">
-                            30
-                        </div>
+                        <Image
+                            src="/brand/logo-icon.png"
+                            alt=""
+                            width={56}
+                            height={56}
+                            className="mx-auto size-14 object-contain"
+                        />
 
                         <h1 className="mt-6 text-3xl font-bold tracking-[-0.04em] sm:text-4xl">
                             Kalkulator akan ada di sini.
